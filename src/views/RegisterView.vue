@@ -30,10 +30,15 @@ export default {
             const userJSON = JSON.stringify(this.user);
             await auth.register(userJSON)
             .then((resp) => {
+                // filtrando as informações
                 const userInfo = { id: resp.data.id, username: resp.data.username };
                 const token = resp.data.token;
+
+                // aplicando elas ao caching do navegador
                 localStorage.setItem("user-info", userInfo);
                 localStorage.setItem("token", token);
+
+                // redirecionando o usuário para a página apropriada
                 this.$router.push({ name: 'dashboard' });
             })
             .catch((err) => {

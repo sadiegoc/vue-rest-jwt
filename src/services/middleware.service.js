@@ -1,3 +1,8 @@
+/**
+ * arquivo que realiza a conexão direta com o servidor
+ * toda comunicação entre cliente e servidor passará por esses arquivos
+ */
+
 import http from "@/http-common";
 
 class MiddlewareService {

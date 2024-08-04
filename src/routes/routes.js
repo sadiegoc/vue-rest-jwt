@@ -1,10 +1,10 @@
 import DashboardView from "@/views/DashboardView.vue";
 import LoginView from "@/views/LoginView.vue";
 import RegisterView from "@/views/RegisterView.vue";
-// import { protect } from "app/middlewares/auth.middleware";
+import ProfileView from "@/views/ProfileView.vue";
+
 import middleware from "@/services/middleware.service";
 import { createRouter, createWebHistory } from "vue-router";
-import ProfileView from "@/views/ProfileView.vue";
 
 const routes = [
     {
@@ -12,7 +12,7 @@ const routes = [
         alias: '/dashboard',
         name: 'dashboard',
         component: DashboardView,
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true } // parâmetro utilizado para determinar se o usuário precisa estar autenticado para acessar
     }, {
         path: '/login',
         name: 'login',
@@ -34,12 +34,18 @@ const router = createRouter({
     routes
 });
 
+// verifica se a rota precisa de autenticação
+// caso precise, valida a autenticação
 router.beforeEach((to, from, next) => {
+    // verifica primeiro se existe um token salvo
     const isAuthenticated = !!localStorage.getItem("token");
 
+    // apenas quem tem requiresAuth = true
     if (to.matched.some(record => record.meta.requiresAuth)) {
 
+        // caso não exista token
         if (!isAuthenticated) next({ name: 'login' });
+        // caso exista, vamos validar
         else {
             const token = localStorage.getItem("token");
             middleware.authorization(token)
@@ -48,6 +54,8 @@ router.beforeEach((to, from, next) => {
         }
 
     } else {
+        // para as rotas login e register 
+        // caso o usuário esteja logado, ele não os acessa
         if (!isAuthenticated) next();
     }
 });
